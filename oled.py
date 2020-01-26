@@ -17,35 +17,42 @@ misc.set_mode(23, 0)
 time.sleep(0.2)
 misc.set_mode(23, 1)
 
-disp = Adafruit_SSD1306.SSD1306_128_32(rst=None)
-width = disp.width
-height = disp.height
 
-disp.begin()
-disp.clear()
-disp.display()
+def disp_init():
+    disp = Adafruit_SSD1306.SSD1306_128_32(rst=None)
+    [getattr(disp, x)() for x in ('begin', 'clear', 'display')]
+    return disp
 
-image = Image.new('1', (width, height))
+
+try:
+    disp = disp_init()
+except Exception:
+    misc.open_w1_i2c()
+    time.sleep(0.2)
+    disp = disp_init()
+
+image = Image.new('1', (disp.width, disp.height))
 draw = ImageDraw.Draw(image)
 
 
+def disp_show():
+    im = image.rotate(180) if misc.conf['oled']['rotate'] else image
+    disp.image(im)
+    disp.display()
+    draw.rectangle((0, 0, disp.width, disp.height), outline=0, fill=0)
+
+
 def welcome():
-    draw.rectangle((0, 0, width, height), outline=0, fill=0)
     draw.text((0, 0), 'Rock Pi SATA HAT', font=font['14'], fill=255)
     draw.text((20, 16), 'loading...', font=font['12'], fill=255)
-    disp.image(image)
-    disp.display()
+    disp_show()
 
 
 def goodbye():
-    draw.rectangle((0, 0, width, height), outline=0, fill=0)
     draw.text((20, 8), 'Good Bye ~', font=font['14'], fill=255)
-    disp.image(image)
-    disp.display()
-    time.sleep(3)
-    draw.rectangle((0, 0, width, height), outline=0, fill=0)
-    disp.image(image)
-    disp.display()
+    disp_show()
+    time.sleep(2)
+    disp_show()  # clear
 
 
 def put_disk_info():
@@ -91,11 +98,9 @@ def gen_pages():
 
 def slider(lock):
     with lock:
-        draw.rectangle((0, 0, width, height), outline=0, fill=0)
         for item in misc.slider_next(gen_pages()):
             draw.text(**item)
-        disp.image(image)
-        disp.display()
+        disp_show()
 
 
 def auto_slider(lock):

@@ -64,10 +64,10 @@ def wait_blk(t1=10):
     t = 0
     while t <= t1:
         try:
-            check_call('lsblk /dev/sda')
-            check_call('lsblk /dev/sdb')
-            check_call('lsblk /dev/sdc')
-            check_call('lsblk /dev/sdd')
+            check_call('lsblk /dev/sda > /dev/null 2>&1')
+            check_call('lsblk /dev/sdb > /dev/null 2>&1')
+            check_call('lsblk /dev/sdc > /dev/null 2>&1')
+            check_call('lsblk /dev/sdd > /dev/null 2>&1')
         except Exception:
             time.sleep(0.1)
             t += 0.1
@@ -106,22 +106,24 @@ def read_conf():
         # other
         conf['slider']['auto'] = cfg.getboolean('slider', 'auto')
         conf['slider']['time'] = cfg.getfloat('slider', 'time')
+        conf['oled']['rotate'] = cfg.getboolean('oled', 'rotate')
     except Exception:
         # fan
-        conf['fan']['lv0'] = 30
-        conf['fan']['lv1'] = 35
-        conf['fan']['lv2'] = 40
-        conf['fan']['lv3'] = 45
+        conf['fan']['lv0'] = 35
+        conf['fan']['lv1'] = 40
+        conf['fan']['lv2'] = 45
+        conf['fan']['lv3'] = 50
         # key
         conf['key']['click'] = 'slider'
         conf['key']['twice'] = 'switch'
         conf['key']['press'] = 'none'
         # time
-        conf['time']['twice'] = 0.8  # second
+        conf['time']['twice'] = 0.7  # second
         conf['time']['press'] = 1.8
         # other
         conf['slider']['auto'] = True
         conf['slider']['time'] = 10  # second
+        conf['oled']['rotate'] = False
 
     return conf
 
@@ -202,6 +204,11 @@ def open_w1_i2c():
     os.system('/sbin/modprobe w1-gpio')
     os.system('/sbin/modprobe w1-therm')
     os.system('/sbin/modprobe i2c-dev')
+
+
+def wait():
+    while True:
+        time.sleep(60)
 
 
 conf = {'disk': [], 'idx': mp.Value('d', -1), 'run': mp.Value('d', 1)}
