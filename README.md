@@ -14,9 +14,32 @@ Youtube guide: https://www.youtube.com/watch?v=Eix0PCB0byQ
 
 original location of install script:  curl -sL https://rock.sh/get-rockpi-sata | sudo -E bash -
 
-Due to a bug in OMV right now 5/9/2020, when you install OMV on a Pi you lose access to Wireless, and when you get it back, it doesnt see 5ghz networks.  Best to use this script instead:  wget -O - https://raw.githubusercontent.com/OpenMediaVault-Plugin-Developers/installScript/96b465008666461f4220c3da8459f0d9aa0d2dcd/install | sudo bash
 
-OpenMediaVault install script:  wget -O - https://github.com/OpenMediaVault-Plugin-Developers/installScript/raw/master/install | sudo bash
+
+Due to a bug in OMV right now 5/9/2020, when you install OMV on a Pi4 4gb you lose access to Wireless, and when you get it back, it doesnt see 5ghz networks.  Best to use this script instead:  wget -O - https://raw.githubusercontent.com/OpenMediaVault-Plugin-Developers/installScript/96b465008666461f4220c3da8459f0d9aa0d2dcd/install | sudo bash
+
+
+Wireless will continue to work with the above script, until you reboot.  Then its disabled on boot.  You can use the following commands to get it up and running again
+sudo ifconfig wlan0 up
+sudo omv-firstaid
+then reconfigure wireless
+
+Usually, only two HDDs will show in OMV, even though the Pi sees 4.  If you have more than 2 drives, you will need to do this fix if they do not show in OMV.
+
+First, use lsusb and locate your the names of your hard drives.  In my case they are western digital.  So it shows as ID 1058:0a10 Western Digital.  We are going to call 1058 the idVendor and 0a10 the idProduct.  You will need to replace the 4 digit codes in the line below with what you just wrote down.  You can “fix” this by adding a rule to /lib/udev/rules.d/60-persistent-storage.rules after the entry for “Fall back usb_id for USB devices”:
+
+>KERNEL=="sd*", ATTRS{idVendor}=="152d", ATTRS{idProduct}=="2338", SUBSYSTEMS=="usb", PROGRAM="/root/serial.sh %k", ENV{ID_SERIAL}="USB-%c", ENV{ID_SERIAL_SHORT}="%c"
+
+You will also need to create sudo nano /root/serial.sh containing the following:
+
+#!/bin/bash
+/sbin/hdparm -I /dev/$1 | grep 'Serial Number' | awk '{print $3}'
+
+save, then sudo chmod +x /root/serial.sh , then reboot
+
+
+
+Official OpenMediaVault install script:  wget -O - https://github.com/OpenMediaVault-Plugin-Developers/installScript/raw/master/install | sudo bash
 
 
 
