@@ -14,7 +14,11 @@ Youtube guide: https://www.youtube.com/watch?v=Eix0PCB0byQ
 
 original location of install script:  curl -sL https://rock.sh/get-rockpi-sata | sudo -E bash -
 
+Due to a bug in OMV right now 5/9/2020, when you install OMV on a Pi you lose access to Wireless, and when you get it back, it doesnt see 5ghz networks.  Best to use this script instead:  wget -O - https://raw.githubusercontent.com/OpenMediaVault-Plugin-Developers/installScript/96b465008666461f4220c3da8459f0d9aa0d2dcd/install | sudo bash
+
 OpenMediaVault install script:  wget -O - https://github.com/OpenMediaVault-Plugin-Developers/installScript/raw/master/install | sudo bash
+
+
 
 Misc. Possible issues and resolutions
 https://forum.radxa.com/t/quad-sata-kit-and-openmediavault-5-raspberry-pi-4/3193
