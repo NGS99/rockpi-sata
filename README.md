@@ -37,7 +37,7 @@ You will also need to create sudo nano /root/serial.sh containing the following:
 
 save, then sudo chmod +x /root/serial.sh , then reboot
 
-
+For some users, the SATA drives will show as USB.  If thats the case, then you cannot use native RAID Management within OMV.  As a result, you can use mdadm to build a software raid.  Personally, I prefer using RSYNC inside OMV and just having it copy all updated files every Monday, Weds, Friday.  This gives me the peace of mind knowing that if I accidently delete something important, I can still access the file on the backup.
 
 Official OpenMediaVault install script:  wget -O - https://github.com/OpenMediaVault-Plugin-Developers/installScript/raw/master/install | sudo bash
 
@@ -55,38 +55,38 @@ sudo systemctl restart rockpi-sata.service
 Below is the default /etc/rockpi-sata.conf, which you can modify according to the comments
 
 [fan]
-# When the temperature is above lv0 (35'C), the fan at 25% power,
-# and lv1 at 50% power, lv2 at 75% power, lv3 at 100% power.
-# When the temperature is below lv0, the fan is turned off.
-# You can change these values if necessary.
+#### # When the temperature is above lv0 (35'C), the fan at 25% power,
+#### # and lv1 at 50% power, lv2 at 75% power, lv3 at 100% power.
+#### # When the temperature is below lv0, the fan is turned off.
+#### # You can change these values if necessary.
 lv0 = 35
 lv1 = 40
 lv2 = 45
 lv3 = 50
  
 [key]
-# You can customize the function of the key, currently available functions are
-# slider: oled display next page
-# switch: fan turn on/off switch
-# reboot, poweroff
-# If you have any good suggestions for key functions, 
-# please add an issue on https://rock.sh/rockpi-sata
+#### # You can customize the function of the key, currently available functions are
+#### # slider: oled display next page
+#### # switch: fan turn on/off switch
+#### # reboot, poweroff
+#### # If you have any good suggestions for key functions, 
+#### # please add an issue on https://rock.sh/rockpi-sata
 click = slider
 twice = switch
 press = none
  
 [time]
-# twice: maximum time between double clicking (seconds)
-# press: long press time (seconds)
+#### # twice: maximum time between double clicking (seconds)
+#### # press: long press time (seconds)
 twice = 0.7
 press = 1.8
  
 [slider]
-# Whether the oled auto display next page and the time interval (seconds)
+#### # Whether the oled auto display next page and the time interval (seconds)
 auto = true
 time = 10
  
 [oled]
-# Whether rotate the text of oled 180 degrees, whether use Fahrenheit
+#### # Whether rotate the text of oled 180 degrees, whether use Fahrenheit
 rotate = false
 f-temp = false
