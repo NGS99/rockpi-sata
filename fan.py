@@ -9,7 +9,9 @@ from pathlib import Path
 
 GPIO.setmode(GPIO.BCM)
 GPIO.setwarnings(False)
+GPIO.setup(12, GPIO.OUT, initial=GPIO.LOW)
 GPIO.setup(13, GPIO.OUT, initial=GPIO.LOW)
+pin12 = GPIO.PWM(13, 75)
 pin13 = GPIO.PWM(13, 75)
 p1 = re.compile(r't=(\d+)\n$')
 
@@ -51,10 +53,12 @@ def get_dc(cache={}):
 def change_dc(dc, cache={}):
     if dc != cache.get('dc'):
         cache['dc'] = dc
+        pin12.ChangeDutyCycle(dc)
         pin13.ChangeDutyCycle(dc)
 
 
 def running():
+    pin12.start(100)
     pin13.start(100)
 
     while True:

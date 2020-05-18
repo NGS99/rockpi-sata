@@ -17,7 +17,7 @@ GPIO.output(17, GPIO.HIGH)
 cmds = {
     'blk': "lsblk | awk '{print $1}'",
     'up': "uptime | sed 's/^.* up \+\(.\+\), \+[0-9] user.*$/\\1/' | awk '{printf \"Uptime: %s\", $0}'",
-    'temp': "cat /sys/class/thermal/thermal_zone0/temp | awk '{printf \"CPU Temp: %.1f°C\", $1/1000}'",
+    'temp': "cat /sys/class/thermal/thermal_zone0/temp",
     'ip': "hostname -I | awk '{printf \"IP %s\", $1}'",
     'cpu': "uptime | awk '{printf \"CPU Load: %.2f\", $(NF-2)}'",
     'men': "free -m | awk 'NR==2{printf \"Mem: %s/%sMB\", $3,$2}'",
@@ -85,6 +85,15 @@ def get_info(s):
     return check_output(cmds[s])
 
 
+def get_cpu_temp():
+    t = float(get_info('temp')) / 1000
+    if conf['oled']['f-temp']:
+        temp = "CPU Temp: {:.0f}°F".format(t * 1.8 + 32)
+    else:
+        temp = "CPU Temp: {:.1f}°C".format(t)
+    return temp
+
+
 def read_conf():
     conf = defaultdict(dict)
 
@@ -107,6 +116,7 @@ def read_conf():
         conf['slider']['auto'] = cfg.getboolean('slider', 'auto')
         conf['slider']['time'] = cfg.getfloat('slider', 'time')
         conf['oled']['rotate'] = cfg.getboolean('oled', 'rotate')
+        conf['oled']['f-temp'] = cfg.getboolean('oled', 'f-temp')
     except Exception:
         # fan
         conf['fan']['lv0'] = 35
@@ -124,6 +134,7 @@ def read_conf():
         conf['slider']['auto'] = True
         conf['slider']['time'] = 10  # second
         conf['oled']['rotate'] = False
+        conf['oled']['f-temp'] = False
 
     return conf
 
