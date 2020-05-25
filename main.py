@@ -53,6 +53,8 @@ if __name__ == '__main__':
         p1.start()
         p2.start()
         p3.start()
-        p1.join()
+        p3.join()
     else:
-        misc.wait()
+        p3 = mp.Process(target=fan.running)
+        p3.start()
+        p3.join()
