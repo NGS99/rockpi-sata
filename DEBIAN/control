@@ -1,0 +1,9 @@
+Package: rockpi-sata
+Version: 0.13
+Architecture: all
+Maintainer: Radxa <dev@radxa.com>
+Depends: python3
+Section: utils
+Priority: optional
+Homepage: https://github.com/akgnah/rockpi-sata
+Description: Rockpi SATA Hat

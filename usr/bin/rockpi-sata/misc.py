@@ -217,11 +217,6 @@ def open_w1_i2c():
     os.system('/sbin/modprobe i2c-dev')
 
 
-def wait():
-    while True:
-        time.sleep(60)
-
-
 conf = {'disk': [], 'idx': mp.Value('d', -1), 'run': mp.Value('d', 1)}
 conf.update(read_conf())
 
