@@ -11,8 +11,8 @@ GPIO.setmode(GPIO.BCM)
 GPIO.setwarnings(False)
 GPIO.setup(12, GPIO.OUT, initial=GPIO.LOW)
 GPIO.setup(13, GPIO.OUT, initial=GPIO.LOW)
-pin12 = GPIO.PWM(12, 75)
-pin13 = GPIO.PWM(13, 75)
+pin12 = GPIO.PWM(12, 2500)
+pin13 = GPIO.PWM(13, 2500)
 p1 = re.compile(r't=(\d+)\n$')
 
 
