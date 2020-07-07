@@ -1,10 +1,12 @@
 #!/bin/sh
 set -e
 
+systemctl enable pigpiod.service
 systemctl enable rockpi-sata.service
 
 if [ -d /run/systemd/system ]; then
   systemctl --system daemon-reload > /dev/null || true
 fi
 
+systemctl start pigpiod.service > /dev/null
 systemctl start rockpi-sata.service > /dev/null

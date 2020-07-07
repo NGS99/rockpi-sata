@@ -1,5 +1,6 @@
 [Unit]
 Description=Rockpi SATA Hat
+After=pigpiod.service
 
 [Service]
 Type=simple

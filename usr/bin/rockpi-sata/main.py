@@ -35,6 +35,7 @@ def main():
         misc.disk_turn_on()
     elif sys.argv[-1] == 'off':
         if top_board:
+            fan.turn_off()
             oled.goodbye()
         misc.disk_turn_off()
         exit(0)

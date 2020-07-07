@@ -1,5 +1,5 @@
 Package: rockpi-sata
-Version: 0.13
+Version: 0.14
 Architecture: all
 Maintainer: Radxa <dev@radxa.com>
 Depends: python3

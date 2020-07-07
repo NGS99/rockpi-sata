@@ -1,19 +1,12 @@
 #!/usr/bin/env python3
 import re
 import time
-import syslog
 import misc
-import RPi.GPIO as GPIO  # pylint: disable=import-error
+import pigpio  # pylint: disable=import-error
 from pathlib import Path
 
-
-GPIO.setmode(GPIO.BCM)
-GPIO.setwarnings(False)
-GPIO.setup(12, GPIO.OUT, initial=GPIO.LOW)
-GPIO.setup(13, GPIO.OUT, initial=GPIO.LOW)
-pin12 = GPIO.PWM(12, 2500)
-pin13 = GPIO.PWM(13, 2500)
-p1 = re.compile(r't=(\d+)\n$')
+pi = pigpio.pi()
+pattern = re.compile(r't=(\d+)\n$')
 
 
 # t1: sensor_temp, t2: cpu_temp
@@ -24,19 +17,24 @@ def read_temp(cache={}):
             w1_slave = next(Path('/sys/bus/w1/devices/').glob('28*/w1_slave'))
         except Exception:
             w1_slave = 'not exist'
-            syslog.syslog('The sensor will take effect after reboot.')
         cache['w1_slave'] = w1_slave
 
     if w1_slave == 'not exist':
         t1 = 42
     else:
         with open(w1_slave) as f:
-            t1 = int(p1.search(f.read()).groups()[0]) / 1000.0
+            t1 = int(pattern.search(f.read()).groups()[0]) / 1000.0
 
     with open('/sys/class/thermal/thermal_zone0/temp') as f:
         t2 = int(f.read().strip()) / 1000.0
 
     return max(t1, t2)
+
+
+def turn_off():
+    misc.conf['run'].value = 0
+    pi.hardware_PWM(12, 25000, 0)
+    pi.hardware_PWM(13, 25000, 0)
 
 
 def get_dc(cache={}):
@@ -53,14 +51,11 @@ def get_dc(cache={}):
 def change_dc(dc, cache={}):
     if dc != cache.get('dc'):
         cache['dc'] = dc
-        pin12.ChangeDutyCycle(dc)
-        pin13.ChangeDutyCycle(dc)
+        pi.hardware_PWM(12, 25000, dc * 10000)
+        pi.hardware_PWM(13, 25000, dc * 10000)
 
 
 def running():
-    pin12.start(100)
-    pin13.start(100)
-
     while True:
         change_dc(get_dc())
         time.sleep(0.1)
