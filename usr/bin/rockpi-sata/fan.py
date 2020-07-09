@@ -2,11 +2,31 @@
 import re
 import time
 import misc
+import syslog
 import pigpio  # pylint: disable=import-error
 from pathlib import Path
 
-pi = pigpio.pi()
 pattern = re.compile(r't=(\d+)\n$')
+
+
+class MockPigpio:
+    @classmethod
+    def pi(cls):
+        try:
+            gpio = pigpio.pi()
+        except Exception:
+            gpio = cls()
+        return gpio
+
+    def __init__(self):
+        syslog.syslog('PWM of pigpio is not available. Use on/off to control the fan.')
+        syslog.syslog('If you use pre-release kernel, please go back to stable release.')
+
+    def hardware_PWM(self, pin, _, dc):
+        misc.set_mode(pin, bool(dc))
+
+
+gpio = MockPigpio.pi()
 
 
 # t1: sensor_temp, t2: cpu_temp
@@ -33,8 +53,8 @@ def read_temp(cache={}):
 
 def turn_off():
     misc.conf['run'].value = 0
-    pi.hardware_PWM(12, 25000, 0)
-    pi.hardware_PWM(13, 25000, 0)
+    gpio.hardware_PWM(12, 0, 0)
+    gpio.hardware_PWM(13, 0, 0)
 
 
 def get_dc(cache={}):
@@ -51,8 +71,8 @@ def get_dc(cache={}):
 def change_dc(dc, cache={}):
     if dc != cache.get('dc'):
         cache['dc'] = dc
-        pi.hardware_PWM(12, 25000, dc * 10000)
-        pi.hardware_PWM(13, 25000, dc * 10000)
+        gpio.hardware_PWM(12, 25000, dc * 10000)
+        gpio.hardware_PWM(13, 25000, dc * 10000)
 
 
 def running():
