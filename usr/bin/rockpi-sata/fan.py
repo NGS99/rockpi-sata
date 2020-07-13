@@ -13,7 +13,8 @@ class MockPigpio:
     @classmethod
     def pi(cls):
         try:
-            gpio = pigpio.pi()
+            host = misc.check_output("netstat -l | grep -o '\S*:8888' | tr -d ':8888'")
+            gpio = pigpio.pi(host=host)
         except Exception:
             gpio = cls()
         return gpio
