@@ -6,8 +6,8 @@ import time
 import subprocess
 import RPi.GPIO as GPIO
 import multiprocessing as mp
+from collections import defaultdict
 from configparser import ConfigParser
-from collections import defaultdict, OrderedDict
 
 GPIO.setmode(GPIO.BCM)
 GPIO.setwarnings(False)
@@ -24,7 +24,7 @@ cmds = {
     'disk': "df -h | awk '$NF==\"/\"{printf \"Disk: %d/%dGB %s\", $3,$2,$5}'"
 }
 
-lv2dc = OrderedDict({'lv3': 100, 'lv2': 75, 'lv1': 50, 'lv0': 25})
+lv2dc = {'lv3': 100, 'lv2': 75, 'lv1': 50, 'lv0': 25}
 
 
 # pin37(bcm26) sata0, pin22(bcm25) sata1
@@ -188,8 +188,8 @@ def slider_sleep():
 def fan_temp2dc(t):
     for lv, dc in lv2dc.items():
         if t >= conf['fan'][lv]:
-            break
-    return dc
+            return dc
+    return 0
 
 
 def fan_switch():
