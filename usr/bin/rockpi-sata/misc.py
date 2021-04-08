@@ -209,7 +209,7 @@ def get_interface_tx_info(interface):
 
 
 def delete_disk_partition_number(disk):
-    if "sd" in disk:
+    if "sd" in disk and any(char.isdigit() for char in disk):
         disk = disk[:-1]
     return disk
 
