@@ -48,14 +48,11 @@ if __name__ == '__main__':
         p0 = mp.Process(target=receive_key, args=(q,))
         p1 = mp.Process(target=misc.watch_key, args=(q,))
         p2 = mp.Process(target=oled.auto_slider, args=(lock,))
-        p3 = mp.Process(target=fan.running)
 
         p0.start()
         p1.start()
         p2.start()
-        p3.start()
-        p3.join()
-    else:
-        p3 = mp.Process(target=fan.running)
-        p3.start()
-        p3.join()
+
+    p3 = mp.Process(target=fan.running)
+    p3.start()
+    p3.join()
