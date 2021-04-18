@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 import sys
+import time
 import fan
 import misc
 try:
@@ -26,6 +27,7 @@ def receive_key(q):
     while True:
         func = misc.get_func(q.get())
         action[func]()
+        time.sleep(0.1)
 
 
 def main():
