@@ -190,7 +190,7 @@ def gen_pages():
     }
 
     pages.update(put_interface_info(len(pages)))
-	pages.update(put_disk_temp_info(len(pages)))
+    pages.update(put_disk_temp_info(len(pages)))
     pages.update(put_disk_io_info(len(pages)))
 
     return pages
