@@ -122,7 +122,7 @@ def read_conf():
         # disk
         conf['disk']['space_usage_mnt_points'] = cfg.get('disk', 'space_usage_mnt_points').split('|')
         conf['disk']['io_usage_mnt_points'] = cfg.get('disk', 'io_usage_mnt_points').split('|')
-		conf['disk']['disks_temp'] = cfg.getboolean('disk', 'disks_temp')
+        conf['disk']['disks_temp'] = cfg.getboolean('disk', 'disks_temp')
         #conf['disk']['disks'] = get_disk_list()
         # network
         conf['network']['interfaces'] = cfg.get('network', 'interfaces').split('|')
@@ -147,7 +147,7 @@ def read_conf():
         # disk
         conf['disk']['space_usage_mnt_points'] = []
         conf['disk']['io_usage_mnt_points'] = []
-		conf['disk']['disks_temp'] = False
+        conf['disk']['disks_temp'] = False
         #conf['disk']['disks'] = []
         # network
         conf['network']['interfaces'] = []
