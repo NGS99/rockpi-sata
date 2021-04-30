@@ -3,6 +3,7 @@ import re
 import os
 import sys
 import time
+import json
 import subprocess
 import RPi.GPIO as GPIO
 import multiprocessing as mp
@@ -121,6 +122,7 @@ def read_conf():
         # disk
         conf['disk']['space_usage_mnt_points'] = cfg.get('disk', 'space_usage_mnt_points').split('|')
         conf['disk']['io_usage_mnt_points'] = cfg.get('disk', 'io_usage_mnt_points').split('|')
+        conf['disk']['disks_temp'] = cfg.getboolean('disk', 'disks_temp')
         #conf['disk']['disks'] = get_disk_list()
         # network
         conf['network']['interfaces'] = cfg.get('network', 'interfaces').split('|')
@@ -145,6 +147,7 @@ def read_conf():
         # disk
         conf['disk']['space_usage_mnt_points'] = []
         conf['disk']['io_usage_mnt_points'] = []
+        conf['disk']['disks_temp'] = False
         #conf['disk']['disks'] = []
         # network
         conf['network']['interfaces'] = []
@@ -227,6 +230,23 @@ def get_disk_list(type):
 
     disks.sort()
     return disks
+
+
+def get_disk_temp_info():
+    if not conf['disk']['disks_temp']:
+        return [(), ()]
+    disks = list(check_output("ls /dev/sd* | grep -E \"[0-9]$\" | cut -f3 -d'/' | tr -d '0123456789'").split("\n"))
+    disks_temp = {}
+    for disk in disks:
+        output = check_output(f"sudo smartctl -A /dev/{disk} -j")
+        object = json.loads(output)
+        disk_temp = object["temperature"]["current"]
+        if conf['oled']['f-temp']:
+            disk_temp = "{:.0f}°F".format(disk_temp * 1.8 + 32)
+        else:
+            disk_temp = "{}°C".format(disk_temp)
+        disks_temp[disk] = disk_temp
+    return list(zip(*disks_temp.items()))
 
 
 def get_disk_io_read_info(disk):
