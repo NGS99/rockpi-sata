@@ -1,0 +1,17 @@
+[Unit]
+Description=Rockpi SATA Hat
+After=pigpiod.service
+Requires=pigpiod.service
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/python3 /usr/bin/rockpi-sata/main.py on
+ExecStop=/usr/bin/python3 /usr/bin/rockpi-sata/main.py off
+Restart=on-failure
+WorkingDirectory=/usr/bin/rockpi-sata
+StandardOutput=syslog
+StandardError=syslog
+SyslogIdentifier=rockpi-sata
+
+[Install]
+WantedBy=multi-user.target

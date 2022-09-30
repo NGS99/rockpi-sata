@@ -1,0 +1,11 @@
+#!/bin/sh
+set -e
+
+systemctl stop rockpi-sata.service
+systemctl disable rockpi-sata.service
+
+if [ -d /run/systemd/system ]; then
+  systemctl --system daemon-reload > /dev/null || true
+fi
+
+rm -rf /usr/bin/rockpi-sata/__pycache__
